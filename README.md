@@ -87,6 +87,16 @@ Get-Pi-Network-GBP
 # lastUpdated         : 2025-05-03T11:40:43Z
 ```
 
+#### ✅ Or add it to your profile:
+```powershell
+# Add to your PowerShell profile
+$data = Get-Pi-Network-GBP
+Write-Host "Pi price: " -NoNewline
+Write-Host -ForegroundColor "Yellow" "£$($data.exchangeRateGBP)" -NoNewline
+Write-Host " | Last updated: " -NoNewline
+Write-Host -ForegroundColor "Yellow" "$($data.lastUpdated)"
+```
+
 ---
 
 ## 🚀 Getting Started
