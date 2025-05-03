@@ -25,6 +25,9 @@ jobs:
       - name: Install Playwright
         run: npm install playwright
 
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+
       - name: Run Playwright scraper and parser
         run: node playwright/scrape-and-parse-pi.cjs
 
