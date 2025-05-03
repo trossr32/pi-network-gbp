@@ -82,7 +82,7 @@ function App() {
       <footer className="py-6 mt-12 border-t dark:border-gray-800 text-center text-sm text-gray-600 dark:text-gray-400">
         <p>
           <div className="flex flex-wrap items-center justify-center mb-2 text-sm">
-            Exchange rates updated every 6 hours using the&nbsp;
+            Exchange rates updated every 30 minutes using the&nbsp;
             <a
               href="https://www.coingecko.com/en/coins/pi-network"
               target="_blank"
