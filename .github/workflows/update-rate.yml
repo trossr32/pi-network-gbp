@@ -47,7 +47,12 @@ jobs:
 
       - name: Load parsed data
         id: parsed
-        run: echo "data=$(cat parsed-data.json | base64)" >> $GITHUB_OUTPUT
+        run: |
+          {
+            echo 'data<<EOF'
+            base64 parsed-data.json
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
 
   update-branch:
     needs: scrape-and-update
