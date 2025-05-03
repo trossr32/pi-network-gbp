@@ -103,10 +103,7 @@ function App() {
             CoinGecko API
           </a>
           &nbsp;| Last updated:{' '}
-          {new Date().toLocaleString('en-GB', {
-            dateStyle: 'short',
-            timeStyle: 'short',
-          })}
+          {config?.lastUpdated}
         </div>
       </footer>
     </div>
