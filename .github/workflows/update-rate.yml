@@ -1,0 +1,103 @@
+name: Update Pi Network Rate
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: "Only preview the parsed data (no commit)"
+        required: false
+        default: "false"
+
+jobs:
+  scrape-and-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Install Playwright
+        run: npm install playwright
+
+      - name: Run Playwright scraper and parser
+        run: node playwright/scrape-and-parse-pi.js
+
+      - name: Load parsed data
+        id: parsed
+        run: echo "data=$(cat parsed-data.json | base64)" >> $GITHUB_OUTPUT
+
+  update-branch:
+    needs: scrape-and-update
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Restore parsed data
+        run: |
+          echo "${{ needs.scrape-and-update.outputs.data }}" | base64 -d > public/data/data.json
+
+      - name: Create timestamped branch
+        id: branch
+        run: |
+          BRANCH_NAME="rate-update_$(date +'%Y%m%d%H%M%S')"
+          git checkout -b $BRANCH_NAME
+          echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+
+      - name: Commit and push changes
+        if: ${{ inputs.dry-run != 'true' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/data.json
+          git commit -m "Update Pi Network rate"
+          git push origin HEAD
+
+      - name: Preview Data (Dry Run)
+        if: ${{ inputs.dry-run == 'true' }}
+        run: cat public/data/data.json
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: ${{ steps.branch.outputs.branch }}
+          title: "Update Pi Network Rate"
+          body: "Automated update from GitHub Action"
+
+      - name: Merge Pull Request using GitHub CLI
+        if: ${{ inputs.dry-run != 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list --head ${{ steps.branch.outputs.branch }} --json number -q '.[0].number')
+          echo "Merging PR #$PR_NUMBER"
+          gh pr merge "$PR_NUMBER" --merge --delete-branch --yes
+
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: "❌ Pi Rate Update Failed",
+              body: "An error occurred during the scheduled run. Check logs here: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
+            });
+            
+      - name: Trigger deploy.yml workflow
+        if: success() && inputs.dry-run != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run deploy.yml
