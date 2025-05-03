@@ -17,19 +17,33 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
+      - name: Fetch data from CoinGecko API
+        id: coingecko
+        run: |
+          response=$(curl --silent --request GET \
+            --url 'https://api.coingecko.com/api/v3/simple/price?vs_currencies=gbp&ids=pi-network&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true&precision=5' \
+            --header 'accept: application/json' \
+            --header "x-cg-demo-api-key: ${{ secrets.COINGECKO_API_KEY }}" )
 
-      - name: Install Playwright
-        run: npm install playwright
+          echo "Raw API response: $response"
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+          # Parse response
+          gbp=$(echo "$response" | jq '.["pi-network"].gbp')
+          market_cap=$(echo "$response" | jq '.["pi-network"].gbp_market_cap')
+          change=$(echo "$response" | jq '.["pi-network"].gbp_24h_change')
+          volume=$(echo "$response" | jq '.["pi-network"].gbp_24h_vol')
+          updated_at=$(echo "$response" | jq '.["pi-network"].last_updated_at')
 
-      - name: Run Playwright scraper and parser
-        run: node playwright/scrape-and-parse-pi.cjs
+          iso_time=$(date -u -d @"$updated_at" --iso-8601=seconds)
+
+          echo "{
+            \"exchangeRateGBP\": $gbp,
+            \"marketCapGBP\": $market_cap,
+            \"percentageChange\": $change,
+            \"24h_vol\": $volume,
+            \"24h_change\": $change,
+            \"lastUpdated\": \"$iso_time\"
+          }" > parsed-data.json
 
       - name: Load parsed data
         id: parsed
