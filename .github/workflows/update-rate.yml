@@ -4,11 +4,6 @@ on:
   schedule:
     - cron: '0 */6 * * *'
   workflow_dispatch:
-    inputs:
-      dry-run:
-        description: "Only preview the parsed data (no commit)"
-        required: false
-        default: "false"
 
 jobs:
   scrape-and-update:
@@ -27,14 +22,12 @@ jobs:
 
           echo "Raw API response: $response"
 
-          # Parse response
           gbp=$(echo "$response" | jq '.["pi-network"].gbp')
           market_cap=$(echo "$response" | jq '.["pi-network"].gbp_market_cap')
           change=$(echo "$response" | jq '.["pi-network"].gbp_24h_change')
           volume=$(echo "$response" | jq '.["pi-network"].gbp_24h_vol')
           updated_at=$(echo "$response" | jq '.["pi-network"].last_updated_at')
-
-          iso_time=$(date -u -d @"$updated_at" --iso-8601=seconds)
+          iso_time=$(date -u -d "@$updated_at" --iso-8601=seconds)
 
           echo "{
             \"exchangeRateGBP\": $gbp,
@@ -43,66 +36,24 @@ jobs:
             \"24h_vol\": $volume,
             \"24h_change\": $change,
             \"lastUpdated\": \"$iso_time\"
-          }" > parsed-data.json
+          }" > public/data/data.json
 
-      - name: Load parsed data
-        id: parsed
-        run: |
-          {
-            echo 'data<<EOF'
-            base64 parsed-data.json
-            echo 'EOF'
-          } >> "$GITHUB_OUTPUT"
-
-  update-branch:
-    needs: scrape-and-update
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Restore parsed data
-        run: |
-          echo "${{ needs.scrape-and-update.outputs.data }}" | base64 -d > public/data/data.json
-
-      - name: Create timestamped branch
-        id: branch
-        run: |
-          BRANCH_NAME="rate-update_$(date +'%Y%m%d%H%M%S')"
-          git checkout -b $BRANCH_NAME
-          echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
-
-      - name: Commit and push changes
-        if: ${{ inputs.dry-run != 'true' }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add public/data/data.json
-          git commit -m "Update Pi Network rate"
-          git push origin HEAD
-
-      - name: Preview Data (Dry Run)
-        if: ${{ inputs.dry-run == 'true' }}
-        run: cat public/data/data.json
-
-      - name: Create Pull Request
-        id: cpr
+      - name: Commit and create pull request
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: main
-          branch: ${{ steps.branch.outputs.branch }}
+          branch: rate-update-${{ github.run_id }}
           title: "Update Pi Network Rate"
-          body: "Automated update from GitHub Action"
+          body: "Automated update from CoinGecko API"
+          commit-message: "Update Pi Network data from CoinGecko"
 
-      - name: Merge Pull Request using GitHub CLI
-        if: ${{ inputs.dry-run != 'true' }}
+      - name: Trigger deploy.yml workflow
+        if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_NUMBER=$(gh pr list --head ${{ steps.branch.outputs.branch }} --json number -q '.[0].number')
-          echo "Merging PR #$PR_NUMBER"
-          gh pr merge "$PR_NUMBER" --merge --delete-branch --yes
+          gh workflow run deploy.yml
 
       - name: Notify on failure
         if: failure()
@@ -116,10 +67,3 @@ jobs:
               title: "❌ Pi Rate Update Failed",
               body: "An error occurred during the scheduled run. Check logs here: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
             });
-            
-      - name: Trigger deploy.yml workflow
-        if: success() && inputs.dry-run != 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh workflow run deploy.yml
