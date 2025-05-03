@@ -5,6 +5,7 @@ import { ArrowLeftRight } from 'lucide-react';
 import ExchangeInfo from './components/ExchangeInfo';
 import Converter from './components/Converter';
 import './index.css';
+import coinGeckoLogo from '/images/coingecko-logo.png';
 
 function App() {
   const [config, setConfig] = useState<PiNetworkConfig | null>(null);
@@ -79,10 +80,25 @@ function App() {
       </main>
 
       <footer className="py-6 mt-12 border-t dark:border-gray-800 text-center text-sm text-gray-600 dark:text-gray-400">
-        <p>Exchange rates updated every 6 hours | Last updated: {new Date().toLocaleString('en-GB', {
-                dateStyle: 'short',
-                timeStyle: 'short',
-              })}</p>
+        <p>
+          <div className="flex flex-wrap items-center justify-center mb-2 text-sm">
+            Exchange rates updated every 6 hours using the&nbsp;
+            <a
+              href="https://www.coingecko.com/en/coins/pi-network"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center px-3 py-1 bg-gray-500 hover:bg-gray-700 text-gray-200 hover:text-white rounded-full transition-colors"
+            >
+              <img src={coinGeckoLogo} alt="CoinGecko" className="h-5 w-auto mr-2" />
+              CoinGecko API
+            </a>
+            &nbsp;| Last updated:{' '}
+            {new Date().toLocaleString('en-GB', {
+              dateStyle: 'short',
+              timeStyle: 'short',
+            })}
+          </div>
+        </p>
       </footer>
     </div>
   );
