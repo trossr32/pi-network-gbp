@@ -129,5 +129,3 @@ Go to **Actions → Update Pi Network Rate → Run workflow**.
 
 This project is licensed under the GNU General Public License v3.0.  
 See the [LICENSE](./LICENSE) file for details.
-
-© 2025 [trossr32](https://github.com/trossr32)
