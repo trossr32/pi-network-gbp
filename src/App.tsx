@@ -6,14 +6,14 @@ import ExchangeInfo from './components/ExchangeInfo';
 import Converter from './components/Converter';
 import './index.css';
 import coinGeckoLogo from '/images/coingecko-logo.png';
-import { useAppUpdateChecker } from './hooks/useAppUpdateChecker';
+//import { useAppUpdateChecker } from './hooks/useAppUpdateChecker';
 
 function App() {
   const [config, setConfig] = useState<PiNetworkConfig | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [piAmount, setPiAmount] = useState<string>('1');
-  const isUpdateAvailable = useAppUpdateChecker({ intervalMinutes: 5 });
+  //const isUpdateAvailable = useAppUpdateChecker({ intervalMinutes: 5 });
 
   useEffect(() => {
     const loadConfig = async () => {
@@ -40,7 +40,7 @@ function App() {
   return (
     <div className="min-h-screen transition-colors duration-300 dark:bg-[#160c23] bg-gray-50">
       <main className="container mx-auto px-4 pt-16 pb-8">
-        {isUpdateAvailable && (
+        {/* {isUpdateAvailable && (
           <div className="fixed bottom-4 left-4 bg-yellow-200 text-black p-3 rounded shadow-lg z-50">
             🔄 A new version of the app is available.&nbsp;
             <button
@@ -50,7 +50,7 @@ function App() {
               Refresh
             </button>
           </div>
-        )}
+        )} */}
 
         {loading ? (
           <div className="flex items-center justify-center h-64">
