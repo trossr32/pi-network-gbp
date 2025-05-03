@@ -39,6 +39,7 @@ jobs:
           }" > public/data/data.json
 
       - name: Commit and create pull request
+        id: cpr
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -47,6 +48,20 @@ jobs:
           title: "Update Pi Network Rate"
           body: "Automated update from CoinGecko API"
           commit-message: "Update Pi Network data from CoinGecko"
+
+      - name: Merge Pull Request using GitHub CLI
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list --state open --head rate-update-${{ github.run_id }} --json number -q '.[0].number')
+          if [ -n "$PR_NUMBER" ]; then
+            echo "Merging PR #$PR_NUMBER"
+            gh pr merge "$PR_NUMBER" --merge --delete-branch --yes
+          else
+            echo "❌ No matching PR found to merge."
+            exit 1
+          fi
 
       - name: Trigger deploy.yml workflow
         if: success()
