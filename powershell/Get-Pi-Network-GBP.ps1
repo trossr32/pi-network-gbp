@@ -15,7 +15,7 @@ function Get-Pi-Network-GBP {
 
     .EXAMPLE
     $data = Get-Pi-Network-GBP
-    $data.exchangeRateGBP
+    $data.priceGBP
     $data.lastUpdated
     Get the data as an object and view it's properties.
 

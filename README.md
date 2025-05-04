@@ -43,7 +43,7 @@ A scheduled workflow runs **every 6 hours** and:
 #### Example JSON structure:
 ```json
 {
-  "exchangeRateGBP": 0.43977,
+  "priceGBP": 0.43977,
   "marketCapGBP": 3098555419.217365,
   "percentageChange": -1.72,
   "24h_vol": 38465549.53958324,
@@ -79,7 +79,7 @@ This script allows you to fetch and view the latest Pi Network data from the com
 Get-Pi-Network-GBP
 
 # Output:
-# exchangeRateGBP     : 0.43977
+# priceGBP     : 0.43977
 # marketCapGBP        : 3098555419.217365
 # percentageChange    : -1.72
 # 24h_vol             : 38465549.53958324
@@ -92,7 +92,7 @@ Get-Pi-Network-GBP
 # Add to your PowerShell profile
 $data = Get-Pi-Network-GBP
 Write-Host "Pi price: " -NoNewline
-Write-Host -ForegroundColor "Yellow" "£$($data.exchangeRateGBP)" -NoNewline
+Write-Host -ForegroundColor "Yellow" "£$($data.priceGBP)" -NoNewline
 Write-Host " | Last updated: " -NoNewline
 Write-Host -ForegroundColor "Yellow" "$($data.lastUpdated)"
 ```

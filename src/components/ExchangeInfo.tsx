@@ -2,13 +2,13 @@ import React from 'react';
 import { ArrowDown, ArrowUp, PoundSterling } from 'lucide-react';
 
 interface ExchangeInfoProps {
-  exchangeRateGBP: number;
+  priceGBP: number;
   marketCapGBP: number;
   percentageChange: number;
 }
 
 const ExchangeInfo: React.FC<ExchangeInfoProps> = ({ 
-  exchangeRateGBP, 
+  priceGBP, 
   marketCapGBP, 
   percentageChange
 }) => {
@@ -23,7 +23,7 @@ const ExchangeInfo: React.FC<ExchangeInfoProps> = ({
     style: 'currency', 
     currency: 'GBP',
     minimumFractionDigits: 5
-  }).format(exchangeRateGBP);
+  }).format(priceGBP);
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-3xl mx-auto mt-8">
