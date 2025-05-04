@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchPiNetworkConfig, fetchPiNetworkConfigForAmount } from './services/api';
 import { PiNetworkConfig } from './types/PiNetworkConfig';
 import { ArrowLeftRight, Link, RefreshCw } from 'lucide-react';

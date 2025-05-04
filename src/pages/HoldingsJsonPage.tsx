@@ -71,9 +71,8 @@ const HoldingsJsonPage: React.FC = () => {
           </div>
         </div>
       </div>
-
       <div className="w-full max-w-3xl mx-auto">
-        <pre style={{ background: '#222', color: '#fff', padding: 16, borderRadius: 8 }}>
+        <pre className="whitespace-pre-wrap break-words rounded bg-gray-100 dark:bg-gray-900 p-4 text-sm text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-700 overflow-x-auto">
           {JSON.stringify(json, null, 2)}
         </pre>
       </div>
