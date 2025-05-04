@@ -76,13 +76,13 @@ function App() {
             </div>
 
             <ExchangeInfo
-              exchangeRateGBP={config.exchangeRateGBP}
+              priceGBP={config.priceGBP}
               marketCapGBP={config.marketCapGBP}
               percentageChange={config.percentageChange}
             />
 
             <Converter
-              exchangeRateGBP={config.exchangeRateGBP}
+              priceGBP={config.priceGBP}
               piAmount={piAmount}
               setPiAmount={setPiAmount}
             />

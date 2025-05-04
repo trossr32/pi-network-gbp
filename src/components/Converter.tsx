@@ -2,23 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { RefreshCw, Link } from 'lucide-react';
 
 interface ConverterProps {
-  exchangeRateGBP: number;
+  priceGBP: number;
   piAmount: string;
   setPiAmount: (value: string) => void;
 }
 
-const Converter: React.FC<ConverterProps> = ({ exchangeRateGBP, piAmount, setPiAmount }) => {
-  const [gbpAmount, setGbpAmount] = useState<string>(exchangeRateGBP.toFixed(5));
+const Converter: React.FC<ConverterProps> = ({ priceGBP, piAmount, setPiAmount }) => {
+  const [gbpAmount, setGbpAmount] = useState<string>(priceGBP.toFixed(5));
 
   useEffect(() => {
     if (piAmount) {
       const pi = parseFloat(piAmount);
       if (!isNaN(pi)) {
-        const gbp = pi * exchangeRateGBP;
+        const gbp = pi * priceGBP;
         setGbpAmount(gbp.toFixed(5));
       }
     }
-  }, [piAmount, exchangeRateGBP]);
+  }, [piAmount, priceGBP]);
 
   const handlePiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -32,7 +32,7 @@ const Converter: React.FC<ConverterProps> = ({ exchangeRateGBP, piAmount, setPiA
     if (value) {
       const gbp = parseFloat(value);
       if (!isNaN(gbp)) {
-        const pi = gbp / exchangeRateGBP;
+        const pi = gbp / priceGBP;
         setPiAmount(pi.toFixed(5));
       }
     }
