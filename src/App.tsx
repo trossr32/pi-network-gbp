@@ -1,41 +1,69 @@
 import React, { useState, useEffect } from 'react';
-import { fetchPiNetworkConfig } from './services/api';
-import { PiNetworkConfig } from './types';
-import { ArrowLeftRight } from 'lucide-react';
+import { fetchPiNetworkConfig, fetchPiNetworkConfigForAmount } from './services/api';
+import { PiNetworkConfig } from './types/PiNetworkConfig';
+import { ArrowLeftRight, Link, RefreshCw } from 'lucide-react';
 import ExchangeInfo from './components/ExchangeInfo';
 import Converter from './components/Converter';
+import Holdings from './components/Holdings';
 import './index.css';
 import coinGeckoLogo from '/images/coingecko-logo.png';
+import { PiNetworkConfigWithAmount } from './types/PiNetworkConfigWithAmount';
+import { AnimatePresence, motion } from 'framer-motion';
 //import { useAppUpdateChecker } from './hooks/useAppUpdateChecker';
 
 function App() {
   const [config, setConfig] = useState<PiNetworkConfig | null>(null);
+  const [amountConfig, setAmountConfig] = useState<PiNetworkConfigWithAmount | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [piAmount, setPiAmount] = useState<string>('1');
+  const [hasAmountParam, setHasAmountParam] = useState<boolean>(false);
   //const isUpdateAvailable = useAppUpdateChecker({ intervalMinutes: 5 });
 
-  useEffect(() => {
-    const loadConfig = async () => {
-      try {
-        const data = await fetchPiNetworkConfig();
-        setConfig(data);
+  // Move loadConfig outside useEffect so it can be reused
+  const loadConfig = async (amountParam?: string) => {
+    try {
+      const data = await fetchPiNetworkConfig();
+      setConfig(data);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const amount = urlParams.get('amount');
-        if (amount) {
-          setPiAmount(amount);
-        }
-      } catch (err) {
-        setError('Failed to load Pi Network configuration. Please try again later.');
-        console.error(err);
-      } finally {
-        setLoading(false);
+      const amount = amountParam ?? new URLSearchParams(window.location.search).get('amount');
+      if (amount) {
+        const amountData = await fetchPiNetworkConfigForAmount(Number(amount));
+        setAmountConfig(amountData);
+        setPiAmount(amount);
+        setHasAmountParam(true);
+      } else {
+        setHasAmountParam(false);
       }
-    };
+    } catch (err) {
+      setError('Failed to load Pi Network configuration. Please try again later.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     loadConfig();
+    // Listen for browser navigation (back/forward)
+    const onPopState = () => {
+      const amount = new URLSearchParams(window.location.search).get('amount');
+      loadConfig(amount ?? undefined);
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
   }, []);
+
+  // Hard refresh handler
+  const handleHardRefresh = () => {
+    // Clear cache and force reload
+    if ('caches' in window) {
+      caches.keys().then(function(names) {
+        for (const name of names) caches.delete(name);
+      });
+    }
+    window.location.reload();
+  };
 
   return (
     <div className="min-h-screen transition-colors duration-300 dark:bg-[#160c23] bg-gray-50">
@@ -73,6 +101,17 @@ function App() {
               <p className="text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
                 Exchange rate and conversion for Pi Network cryptocurrency to GBP
               </p>
+              {/* refresh button */}
+              <div className="flex justify-center mt-6">
+                <button
+                  onClick={handleHardRefresh}
+                  className="flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg shadow transition-colors font-semibold"
+                  title="Refresh (clear cache and reload)"
+                >
+                  <RefreshCw className="h-5 w-5 mr-2" />
+                  Refresh
+                </button>
+              </div>
             </div>
 
             <ExchangeInfo
@@ -81,11 +120,61 @@ function App() {
               percentageChange={config.percentageChange}
             />
 
-            <Converter
-              priceGBP={config.priceGBP}
-              piAmount={piAmount}
-              setPiAmount={setPiAmount}
-            />
+            {/* Info panel: show only if no amount param */}
+            <AnimatePresence>
+              {!hasAmountParam && (
+                <motion.div
+                  key="info-panel"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.4 }}
+                  className="w-full max-w-3xl mx-auto mt-10 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-lg p-4 text-blue-900 dark:text-blue-100 text-center shadow"
+                >
+                  <span className="font-semibold">Tip:</span> Enter the amount of Pi coins you own and click{' '}
+                  <span className="inline-flex items-center font-semibold">
+                    Create Permalink
+                    <Link className="h-4 w-4 text-amber-600 dark:text-amber-500 ml-1 inline" />
+                  </span>{' '}
+                  to see the value of your holdings.
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className={`flex flex-col ${hasAmountParam ? 'lg:flex-row lg:space-x-8' : ''} w-full max-w-3xl mx-auto`}>
+              <AnimatePresence>
+                {hasAmountParam && amountConfig && (
+                  <motion.div
+                    key="holdings"
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4 }}
+                    className="lg:w-1/2 flex flex-col"
+                  >
+                    <Holdings
+                      count={amountConfig.customHoldings.count}
+                      totalGBP={amountConfig.customHoldings.totalGBP}
+                      high_24hGBP={amountConfig.customHoldings.high_24hGBP}
+                      low_24hGBP={amountConfig.customHoldings.low_24hGBP}
+                      allTimeHigh={amountConfig.customHoldings.allTimeHigh}
+                      allTimeLow={amountConfig.customHoldings.allTimeLow}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <div className={`flex flex-col ${hasAmountParam ? 'lg:w-1/2' : 'w-full'}`}>
+                <Converter
+                  priceGBP={config.priceGBP}
+                  piAmount={piAmount}
+                  setPiAmount={setPiAmount}
+                  onPermalink={(amount) => {
+                    // After permalink, reload config for new amount
+                    loadConfig(amount);
+                  }}
+                />
+              </div>
+            </div>
           </>
         )}
       </main>

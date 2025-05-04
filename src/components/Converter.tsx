@@ -5,9 +5,10 @@ interface ConverterProps {
   priceGBP: number;
   piAmount: string;
   setPiAmount: (value: string) => void;
+  onPermalink?: (amount: string) => void;
 }
 
-const Converter: React.FC<ConverterProps> = ({ priceGBP, piAmount, setPiAmount }) => {
+const Converter: React.FC<ConverterProps> = ({ priceGBP, piAmount, setPiAmount, onPermalink }) => {
   const [gbpAmount, setGbpAmount] = useState<string>(priceGBP.toFixed(5));
 
   useEffect(() => {
@@ -42,6 +43,9 @@ const Converter: React.FC<ConverterProps> = ({ priceGBP, piAmount, setPiAmount }
     const url = new URL(window.location.href);
     url.searchParams.set('amount', piAmount);
     window.history.pushState({}, '', url.toString());
+    if (onPermalink) {
+      onPermalink(piAmount);
+    }
   };
 
   const isValidAmount = !isNaN(parseFloat(piAmount));
