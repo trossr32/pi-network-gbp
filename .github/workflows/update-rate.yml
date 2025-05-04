@@ -12,6 +12,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
       - name: Fetch data from CoinGecko API
         id: coingecko
         run: |
@@ -31,7 +36,7 @@ jobs:
           percentage_change_24h=$(echo "$response" | jq '.market_data.price_change_percentage_24h')
           high_24h_gbp=$(echo "$response" | jq '.market_data.high_24h.gbp')
           low_24h_gbp=$(echo "$response" | jq '.market_data.low_24h.gbp')
-          last_updated=$(echo "$response" | jq '.market_data.last_updated')
+          last_updated=$(echo "$response" | jq '.last_updated')
 
           ath_price=$(echo "$response" | jq '.market_data.ath.gbp')
           ath_change_pct=$(echo "$response" | jq '.market_data.ath_change_percentage.gbp')
@@ -41,9 +46,9 @@ jobs:
           atl_change_pct=$(echo "$response" | jq '.market_data.atl_change_percentage.gbp')
           atl_date=$(echo "$response" | jq '.market_data.atl_date.gbp')
 
-          # Extracting nested price change stats
           price_change_24h=$(echo "$response" | jq '.market_data.price_change_24h')
           price_change_24h_gbp=$(echo "$response" | jq '.market_data.price_change_24h_in_currency.gbp')
+
           pct_change_24h=$(echo "$response" | jq '.market_data.price_change_percentage_24h')
           pct_change_7d=$(echo "$response" | jq '.market_data.price_change_percentage_7d')
           pct_change_14d=$(echo "$response" | jq '.market_data.price_change_percentage_14d')
@@ -60,7 +65,7 @@ jobs:
           pct_change_200d_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_200d_in_currency.gbp')
           pct_change_1y_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_1y_in_currency.gbp')
 
-          echo "{
+          formatted_json="{
             \"id\": $id,
             \"symbol\": $symbol,
             \"name\": $name,
@@ -100,7 +105,24 @@ jobs:
             }
           }"
 
+          mkdir -p data
+          echo "$formatted_json" > data/pi-network.json
+
+      - name: Check if data file changed
+        id: check_diff
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          if git diff --quiet data/pi-network.json; then
+            echo "No changes detected. Skipping PR creation."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Changes detected."
+            git add data/pi-network.json
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Commit and create pull request
+        if: steps.check_diff.outputs.changed == 'true'
         id: cpr
         uses: peter-evans/create-pull-request@v5
         with:
@@ -112,21 +134,16 @@ jobs:
           commit-message: "Update Pi Network data from CoinGecko"
 
       - name: Merge Pull Request using GitHub CLI
-        if: success()
+        if: steps.cpr.outputs.pull-request-number != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          PR_NUMBER=$(gh pr list --state open --head rate-update-${{ github.run_id }} --json number -q '.[0].number')
-          if [ -n "$PR_NUMBER" ]; then
-            echo "Merging PR #$PR_NUMBER"
-            echo y | gh pr merge "$PR_NUMBER" --merge --delete-branch
-          else
-            echo "❌ No matching PR found to merge."
-            exit 1
-          fi
+          PR_NUMBER=${{ steps.cpr.outputs.pull-request-number }}
+          echo "Merging PR #$PR_NUMBER"
+          echo y | gh pr merge "$PR_NUMBER" --merge --delete-branch
 
       - name: Trigger deploy.yml workflow
-        if: success()
+        if: steps.cpr.outputs.pull-request-number != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
