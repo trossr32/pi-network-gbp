@@ -10,17 +10,11 @@ on:
     types: [opened, synchronize, reopened]
     branches: [ main ]
     paths-ignore:
-      - 'nginx/**'
-      - 'public/**'
-      - 'terraform/**'
-      - .dockerignore'
-      - .env.development'
-      - .env.production'
-      - .eslintrc.cjs'
-      - .gitignore'
-      - Dockerfile'
-      - README.md'
-      - entrypoint.sh'
+      - 'README.md'
+      - '.gitignore'
+      - '.github/**'
+      - 'LICENSE'
+      - 'powershell/**'
   
   workflow_dispatch:
 

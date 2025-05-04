@@ -4,7 +4,13 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main  # or 'master', depending on your repo
+      - main
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+      - '.github/**'
+      - 'LICENSE'
+      - 'powershell/**'
 
 permissions:
   contents: write  # needed to push to gh-pages
