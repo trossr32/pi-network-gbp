@@ -103,10 +103,7 @@ jobs:
               \"percentageChangePi_GBP_200d\": $pct_change_200d_gbp,
               \"percentageChangePi_GBP_1y\": $pct_change_1y_gbp
             }
-          }"
-
-          mkdir -p data
-          echo "$formatted_json" > data/pi-network.json
+          }" > public/data/data.json
 
       - name: Check if data file changed
         id: check_diff
