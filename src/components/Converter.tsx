@@ -79,7 +79,7 @@ const Converter: React.FC<ConverterProps> = ({ priceGBP, piAmount, setPiAmount, 
             <div className="absolute inset-y-0 right-0 flex items-center space-x-2 pr-3">
               {isValidAmount && (
                 <div className="relative group">
-                  <button
+                  <button aria-label='Create permalink'
                     onClick={createPermalink}
                     className="p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600 
                               transition-colors duration-200"

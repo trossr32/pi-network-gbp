@@ -42,7 +42,7 @@ const Holdings: React.FC<ConverterProps> = ({
                     transition-all duration-300 border border-transparent dark:border-gray-700">
       {/* JSON button with tooltip */}
       <div className="absolute top-1 right-1 group">
-        <button
+        <button aria-label='View holdings JSON response'
           onClick={handleJsonClick}
           className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors shadow focus:outline-none"
           type="button"
