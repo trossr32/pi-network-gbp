@@ -29,7 +29,7 @@ This project provides a complete pipeline to track and display the GBP exchange 
 
 #### ✅ GitHub Actions (`/.github/workflows/update-rate.yml`)
 
-A scheduled workflow runs **every 30 minutes** and:
+A scheduled workflow runs **every 6 hours** and:
 
 1. Fetches live data from the [CoinGecko API](https://www.coingecko.com/)
 2. Parses:
