@@ -1,7 +1,7 @@
 function Get-Pi-Network-GBP {
     <#
     .SYNOPSIS
-    Retrieves Pi Network exchange rate and market data in GBP, accurate up to the last 30 minutes.
+    Retrieves Pi Network exchange rate and market data in GBP, accurate up to the last 6 hours.
 
     .DESCRIPTION
     This cmdlet calls the JSON endpoint hosted at trossr32.github.io to retrieve
