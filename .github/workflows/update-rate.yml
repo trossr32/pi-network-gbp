@@ -8,6 +8,7 @@ on:
 jobs:
   scrape-and-update:
     runs-on: ubuntu-latest
+    timeout-minutes: 1
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
