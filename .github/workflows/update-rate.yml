@@ -105,7 +105,10 @@ jobs:
           pi_json=$(fetch_and_format "pi-network")
           xrp_json=$(fetch_and_format "xrp")
 
-          echo "{\n  \"pi-network\": $pi_json,\n  \"xrp\": $xrp_json\n}" > public/data/data.json
+          echo "{
+            \"pi-network\": $pi_json,
+            \"xrp\": $xrp_json
+          }" > public/data/data.json
 
       - name: Check if data file changed
         id: check_diff
@@ -128,9 +131,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: main
           branch: rate-update-${{ github.run_id }}
-          title: "Update Pi Network Rate"
+          title: "Update Pi Network & XRP Rate"
           body: "Automated update from CoinGecko API"
-          commit-message: "Update Pi Network data from CoinGecko"
+          commit-message: "Update Pi Network & XRP data from CoinGecko"
 
       - name: Merge Pull Request using GitHub CLI
         if: steps.cpr.outputs.pull-request-number != ''
@@ -157,6 +160,6 @@ jobs:
             await github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: "❌ Pi Rate Update Failed",
+              title: "❌ Pi & XRP Rate Update Failed",
               body: "An error occurred during the scheduled run. Check logs here: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"
             });
