@@ -1,42 +1,44 @@
-{\n  "pi-network": {
+{
+  "pi-network": {
     "id": "pi-network",
     "symbol": "pi",
     "name": "Pi Network",
-    "priceGBP": 0.329763,
-    "marketCapGBP": 2543838384,
-    "percentageChange": -1.04988,
+    "priceGBP": 0.330313,
+    "marketCapGBP": 2547033005,
+    "percentageChange": -0.23715,
     "high_24hGBP": 0.335715,
     "low_24hGBP": 0.327265,
-    "lastUpdated": "2025-07-19T20:19:18.085Z",
+    "lastUpdated": "2025-07-19T20:28:15.359Z",
     "allTimeHigh": {
       "priceGBP": 2.35,
-      "percentageChange": -85.96106,
+      "percentageChange": -85.96118,
       "date": "2025-02-26T16:41:03.732Z"
     },
     "allTimeLow": {
       "priceGBP": 0.315895,
-      "percentageChange": 4.56507,
+      "percentageChange": 4.56419,
       "date": "2025-04-05T04:50:37.033Z"
     },
     "priceChange": {
-      "pricePi_24h": -0.004692991513035,
-      "priceGBP24h": -0.003456371006579084,
-      "percentageChangePi_24h": -1.04988,
-      "percentageChangePi_7d": -4.65512,
-      "percentageChangePi_14d": -3.9863,
-      "percentageChangePi_30d": -17.3259,
-      "percentageChangePi_60d": -40.66644,
+      "pricePi_24h": -0.0010531976928987,
+      "priceGBP24h": -0.000782985765380551,
+      "percentageChangePi_24h": -0.23715,
+      "percentageChangePi_7d": -4.49608,
+      "percentageChangePi_14d": -3.82614,
+      "percentageChangePi_30d": -17.18799,
+      "percentageChangePi_60d": -40.56747,
       "percentageChangePi_200d": 0.0,
       "percentageChangePi_1y": 0.0,
-      "percentageChangePi_GBP": -1.03727,
-      "percentageChangePi_GBP_7d": -4.05089,
-      "percentageChangePi_GBP_14d": -2.25052,
-      "percentageChangePi_GBP_30d": -16.98137,
-      "percentageChangePi_GBP_60d": -40.7805,
+      "percentageChangePi_GBP": -0.23648,
+      "percentageChangePi_GBP_7d": -3.89084,
+      "percentageChangePi_GBP_14d": -2.08746,
+      "percentageChangePi_GBP_30d": -16.84289,
+      "percentageChangePi_GBP_60d": -40.68172,
       "percentageChangePi_GBP_200d": null,
       "percentageChangePi_GBP_1y": null
     }
-  },\n  "xrp": {
+  },
+  "xrp": {
     "id": null,
     "symbol": null,
     "name": null,
@@ -74,4 +76,5 @@
       "percentageChangePi_GBP_200d": null,
       "percentageChangePi_GBP_1y": null
     }
-  }\n}
+  }
+}
