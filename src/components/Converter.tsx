@@ -6,9 +6,10 @@ interface ConverterProps {
   piAmount: string;
   setPiAmount: (value: string) => void;
   onPermalink?: (amount: string) => void;
+  currency?: string;
 }
 
-const Converter: React.FC<ConverterProps> = ({ priceGBP, piAmount, setPiAmount, onPermalink }) => {
+const Converter: React.FC<ConverterProps> = ({ priceGBP, piAmount, setPiAmount, onPermalink, currency = 'pi-network' }) => {
   const [gbpAmount, setGbpAmount] = useState<string>(priceGBP.toFixed(5));
 
   useEffect(() => {
@@ -60,7 +61,7 @@ const Converter: React.FC<ConverterProps> = ({ priceGBP, piAmount, setPiAmount, 
       <div className="space-y-6">
         <div className="space-y-2">
           <label htmlFor="pi-amount" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Pi Amount
+            {currency === 'xrp' ? 'XRP Amount' : 'Pi Amount'}
           </label>
           <div className="relative rounded-md shadow-sm">
             <input

@@ -18,93 +18,94 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Fetch data from CoinGecko API
+
+      - name: Fetch data for Pi Network and XRP from CoinGecko API
         id: coingecko
         run: |
-          response=$(curl --silent --request GET \
-            --url 'https://api.coingecko.com/api/v3/coins/pi-network?localization=false&tickers=false&community_data=false&developer_data=false&sparkline=false' \
-            --header 'accept: application/json' \
-            --header "x-cg-demo-api-key: ${{ secrets.COINGECKO_API_KEY }}" )
+          fetch_and_format() {
+            coin_id=$1
+            response=$(curl --silent --request GET \
+              --url "https://api.coingecko.com/api/v3/coins/$coin_id?localization=false&tickers=false&community_data=false&developer_data=false&sparkline=false" \
+              --header 'accept: application/json' \
+              --header "x-cg-demo-api-key: ${{ secrets.COINGECKO_API_KEY }}" )
 
-          echo "Raw API response: $response"
+            id=$(echo "$response" | jq '.id')
+            symbol=$(echo "$response" | jq '.symbol')
+            name=$(echo "$response" | jq '.name')
+            price_gbp=$(echo "$response" | jq '.market_data.current_price.gbp')
+            market_cap_gbp=$(echo "$response" | jq '.market_data.market_cap.gbp')
+            percentage_change_24h=$(echo "$response" | jq '.market_data.price_change_percentage_24h')
+            high_24h_gbp=$(echo "$response" | jq '.market_data.high_24h.gbp')
+            low_24h_gbp=$(echo "$response" | jq '.market_data.low_24h.gbp')
+            last_updated=$(echo "$response" | jq '.last_updated')
+            ath_price=$(echo "$response" | jq '.market_data.ath.gbp')
+            ath_change_pct=$(echo "$response" | jq '.market_data.ath_change_percentage.gbp')
+            ath_date=$(echo "$response" | jq '.market_data.ath_date.gbp')
+            atl_price=$(echo "$response" | jq '.market_data.atl.gbp')
+            atl_change_pct=$(echo "$response" | jq '.market_data.atl_change_percentage.gbp')
+            atl_date=$(echo "$response" | jq '.market_data.atl_date.gbp')
+            price_change_24h=$(echo "$response" | jq '.market_data.price_change_24h')
+            price_change_24h_gbp=$(echo "$response" | jq '.market_data.price_change_24h_in_currency.gbp')
+            pct_change_24h=$(echo "$response" | jq '.market_data.price_change_percentage_24h')
+            pct_change_7d=$(echo "$response" | jq '.market_data.price_change_percentage_7d')
+            pct_change_14d=$(echo "$response" | jq '.market_data.price_change_percentage_14d')
+            pct_change_30d=$(echo "$response" | jq '.market_data.price_change_percentage_30d')
+            pct_change_60d=$(echo "$response" | jq '.market_data.price_change_percentage_60d')
+            pct_change_200d=$(echo "$response" | jq '.market_data.price_change_percentage_200d')
+            pct_change_1y=$(echo "$response" | jq '.market_data.price_change_percentage_1y')
+            pct_change_24h_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_24h_in_currency.gbp')
+            pct_change_7d_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_7d_in_currency.gbp')
+            pct_change_14d_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_14d_in_currency.gbp')
+            pct_change_30d_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_30d_in_currency.gbp')
+            pct_change_60d_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_60d_in_currency.gbp')
+            pct_change_200d_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_200d_in_currency.gbp')
+            pct_change_1y_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_1y_in_currency.gbp')
 
-          id=$(echo "$response" | jq '.id')
-          symbol=$(echo "$response" | jq '.symbol')
-          name=$(echo "$response" | jq '.name')
+            echo "{
+              \"id\": $id,
+              \"symbol\": $symbol,
+              \"name\": $name,
+              \"priceGBP\": $price_gbp,
+              \"marketCapGBP\": $market_cap_gbp,
+              \"percentageChange\": $percentage_change_24h,
+              \"high_24hGBP\": $high_24h_gbp,
+              \"low_24hGBP\": $low_24h_gbp,
+              \"lastUpdated\": $last_updated,
+              \"allTimeHigh\": {
+                \"priceGBP\": $ath_price,
+                \"percentageChange\": $ath_change_pct,
+                \"date\": $ath_date
+              },
+              \"allTimeLow\": {
+                \"priceGBP\": $atl_price,
+                \"percentageChange\": $atl_change_pct,
+                \"date\": $atl_date
+              },
+              \"priceChange\": {
+                \"pricePi_24h\": $price_change_24h,
+                \"priceGBP24h\": $price_change_24h_gbp,
+                \"percentageChangePi_24h\": $pct_change_24h,
+                \"percentageChangePi_7d\": $pct_change_7d,
+                \"percentageChangePi_14d\": $pct_change_14d,
+                \"percentageChangePi_30d\": $pct_change_30d,
+                \"percentageChangePi_60d\": $pct_change_60d,
+                \"percentageChangePi_200d\": $pct_change_200d,
+                \"percentageChangePi_1y\": $pct_change_1y,
+                \"percentageChangePi_GBP\": $pct_change_24h_gbp,
+                \"percentageChangePi_GBP_7d\": $pct_change_7d_gbp,
+                \"percentageChangePi_GBP_14d\": $pct_change_14d_gbp,
+                \"percentageChangePi_GBP_30d\": $pct_change_30d_gbp,
+                \"percentageChangePi_GBP_60d\": $pct_change_60d_gbp,
+                \"percentageChangePi_GBP_200d\": $pct_change_200d_gbp,
+                \"percentageChangePi_GBP_1y\": $pct_change_1y_gbp
+              }
+            }"
+          }
 
-          price_gbp=$(echo "$response" | jq '.market_data.current_price.gbp')
-          market_cap_gbp=$(echo "$response" | jq '.market_data.market_cap.gbp')
-          percentage_change_24h=$(echo "$response" | jq '.market_data.price_change_percentage_24h')
-          high_24h_gbp=$(echo "$response" | jq '.market_data.high_24h.gbp')
-          low_24h_gbp=$(echo "$response" | jq '.market_data.low_24h.gbp')
-          last_updated=$(echo "$response" | jq '.last_updated')
+          pi_json=$(fetch_and_format "pi-network")
+          xrp_json=$(fetch_and_format "xrp")
 
-          ath_price=$(echo "$response" | jq '.market_data.ath.gbp')
-          ath_change_pct=$(echo "$response" | jq '.market_data.ath_change_percentage.gbp')
-          ath_date=$(echo "$response" | jq '.market_data.ath_date.gbp')
-
-          atl_price=$(echo "$response" | jq '.market_data.atl.gbp')
-          atl_change_pct=$(echo "$response" | jq '.market_data.atl_change_percentage.gbp')
-          atl_date=$(echo "$response" | jq '.market_data.atl_date.gbp')
-
-          price_change_24h=$(echo "$response" | jq '.market_data.price_change_24h')
-          price_change_24h_gbp=$(echo "$response" | jq '.market_data.price_change_24h_in_currency.gbp')
-
-          pct_change_24h=$(echo "$response" | jq '.market_data.price_change_percentage_24h')
-          pct_change_7d=$(echo "$response" | jq '.market_data.price_change_percentage_7d')
-          pct_change_14d=$(echo "$response" | jq '.market_data.price_change_percentage_14d')
-          pct_change_30d=$(echo "$response" | jq '.market_data.price_change_percentage_30d')
-          pct_change_60d=$(echo "$response" | jq '.market_data.price_change_percentage_60d')
-          pct_change_200d=$(echo "$response" | jq '.market_data.price_change_percentage_200d')
-          pct_change_1y=$(echo "$response" | jq '.market_data.price_change_percentage_1y')
-
-          pct_change_24h_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_24h_in_currency.gbp')
-          pct_change_7d_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_7d_in_currency.gbp')
-          pct_change_14d_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_14d_in_currency.gbp')
-          pct_change_30d_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_30d_in_currency.gbp')
-          pct_change_60d_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_60d_in_currency.gbp')
-          pct_change_200d_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_200d_in_currency.gbp')
-          pct_change_1y_gbp=$(echo "$response" | jq '.market_data.price_change_percentage_1y_in_currency.gbp')
-
-          echo "{
-            \"id\": $id,
-            \"symbol\": $symbol,
-            \"name\": $name,
-            \"priceGBP\": $price_gbp,
-            \"marketCapGBP\": $market_cap_gbp,
-            \"percentageChange\": $percentage_change_24h,
-            \"high_24hGBP\": $high_24h_gbp,
-            \"low_24hGBP\": $low_24h_gbp,
-            \"lastUpdated\": $last_updated,
-            \"allTimeHigh\": {
-              \"priceGBP\": $ath_price,
-              \"percentageChange\": $ath_change_pct,
-              \"date\": $ath_date
-            },
-            \"allTimeLow\": {
-              \"priceGBP\": $atl_price,
-              \"percentageChange\": $atl_change_pct,
-              \"date\": $atl_date
-            },
-            \"priceChange\": {
-              \"pricePi_24h\": $price_change_24h,
-              \"priceGBP24h\": $price_change_24h_gbp,
-              \"percentageChangePi_24h\": $pct_change_24h,
-              \"percentageChangePi_7d\": $pct_change_7d,
-              \"percentageChangePi_14d\": $pct_change_14d,
-              \"percentageChangePi_30d\": $pct_change_30d,
-              \"percentageChangePi_60d\": $pct_change_60d,
-              \"percentageChangePi_200d\": $pct_change_200d,
-              \"percentageChangePi_1y\": $pct_change_1y,
-              \"percentageChangePi_GBP\": $pct_change_24h_gbp,
-              \"percentageChangePi_GBP_7d\": $pct_change_7d_gbp,
-              \"percentageChangePi_GBP_14d\": $pct_change_14d_gbp,
-              \"percentageChangePi_GBP_30d\": $pct_change_30d_gbp,
-              \"percentageChangePi_GBP_60d\": $pct_change_60d_gbp,
-              \"percentageChangePi_GBP_200d\": $pct_change_200d_gbp,
-              \"percentageChangePi_GBP_1y\": $pct_change_1y_gbp
-            }
-          }" > public/data/data.json
+          echo "{\n  \"pi-network\": $pi_json,\n  \"xrp\": $xrp_json\n}" > public/data/data.json
 
       - name: Check if data file changed
         id: check_diff

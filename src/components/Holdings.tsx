@@ -19,6 +19,8 @@ interface ConverterProps {
     percentageChange: number;
     date: string;
   };
+  minimalMode?: boolean;
+  currency?: string;
 }
 
 const Holdings: React.FC<ConverterProps> = ({
@@ -27,7 +29,9 @@ const Holdings: React.FC<ConverterProps> = ({
   high_24hGBP,
   low_24hGBP,
   allTimeHigh,
-  allTimeLow
+  allTimeLow,
+  minimalMode = false,
+  currency = 'pi-network'
 }) => {
   // Build the holdings JSON URL with the current count
   const holdingsJsonUrl = `${import.meta.env.BASE_URL}holdings-json?amount=${count}`;
@@ -38,23 +42,24 @@ const Holdings: React.FC<ConverterProps> = ({
   };
 
   return (
-    <div className="relative w-full max-w-md mx-auto mt-10 bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6
-                    transition-all duration-300 border border-transparent dark:border-gray-700">
+    <div className={`relative w-full max-w-md${minimalMode ? '' : ' mx-auto mt-10'} bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 transition-all duration-300 border border-transparent dark:border-gray-700`}>
       {/* JSON button with tooltip */}
-      <div className="absolute top-1 right-1 group">
-        <button aria-label='View holdings JSON response'
-          onClick={handleJsonClick}
-          className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors shadow focus:outline-none"
-          type="button"
-        >
-          <FileJson className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-        </button>
-        <div className="absolute left-0 top-full mt-2 px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
-          View holdings JSON response
+      {!minimalMode && (
+        <div className="absolute top-1 right-1 group">
+          <button aria-label='View holdings JSON response'
+            onClick={handleJsonClick}
+            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors shadow focus:outline-none"
+            type="button"
+          >
+            <FileJson className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+          </button>
+          <div className="absolute left-0 top-full mt-2 px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+            View holdings JSON response
+          </div>
         </div>
-      </div>
+      )}
       <h2 className="text-xl font-bold text-center mb-6 text-gray-900 dark:text-white">
-        Holdings ({count})
+        Holdings ({count}) {currency === 'xrp' ? 'XRP' : 'Pi Network'}
       </h2>
       <div className="space-y-4">
         <div className="flex justify-between pb-4">
