@@ -18,17 +18,25 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [piAmount, setPiAmount] = useState<string>('1');
   const [hasAmountParam, setHasAmountParam] = useState<boolean>(false);
-  //const isUpdateAvailable = useAppUpdateChecker({ intervalMinutes: 5 });
+  const [isMinimalMode, setIsMinimalMode] = useState<boolean>(false);
+  const [currency, setCurrency] = useState<string>('pi-network');
 
   // Move loadConfig outside useEffect so it can be reused
   const loadConfig = async (amountParam?: string) => {
     try {
-      const data = await fetchPiNetworkConfig();
+      // Check for minimal mode and currency in querystring
+      const params = new URLSearchParams(window.location.search);
+      const mode = params.get('mode');
+      setIsMinimalMode(mode === 'minimal');
+      const currencyParam = params.get('currency')?.toLowerCase() || 'pi-network';
+      setCurrency(currencyParam);
+
+      const data = await fetchPiNetworkConfig(currencyParam);
       setConfig(data);
 
-      const amount = amountParam ?? new URLSearchParams(window.location.search).get('amount');
+      const amount = amountParam ?? params.get('amount');
       if (amount) {
-        const amountData = await fetchPiNetworkConfigForAmount(Number(amount));
+        const amountData = await fetchPiNetworkConfigForAmount(Number(amount), currencyParam);
         setAmountConfig(amountData);
         setPiAmount(amount);
         setHasAmountParam(true);
@@ -36,7 +44,7 @@ function App() {
         setHasAmountParam(false);
       }
     } catch (err) {
-      setError('Failed to load Pi Network configuration. Please try again later.');
+      setError('Failed to load configuration. Please try again later.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -65,21 +73,38 @@ function App() {
     window.location.reload();
   };
 
+  if (isMinimalMode) {
+    // Minimal mode: only show Holdings panel if amount param is present, with minimal margin and hide JSON button
+    return (
+      <div className="min-h-screen transition-colors duration-300 dark:bg-[#160c23] bg-gray-50 flex items-center justify-center p-[5px]">
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#a1722f]"></div>
+          </div>
+        ) : error ? (
+          <div className="text-center text-red-600 dark:text-red-400 p-4 bg-red-100 dark:bg-red-900/20 rounded-lg">
+            {error}
+          </div>
+        ) : (hasAmountParam && amountConfig) ? (
+          <Holdings
+            count={amountConfig.customHoldings.count}
+            totalGBP={amountConfig.customHoldings.totalGBP}
+            high_24hGBP={amountConfig.customHoldings.high_24hGBP}
+            low_24hGBP={amountConfig.customHoldings.low_24hGBP}
+            allTimeHigh={amountConfig.customHoldings.allTimeHigh}
+            allTimeLow={amountConfig.customHoldings.allTimeLow}
+            minimalMode={true}
+            currency={currency}
+          />
+        ) : null}
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen transition-colors duration-300 dark:bg-[#160c23] bg-gray-50">
       <main className="container mx-auto px-4 pt-16 pb-8">
-        {/* {isUpdateAvailable && (
-          <div className="fixed bottom-4 left-4 bg-yellow-200 text-black p-3 rounded shadow-lg z-50">
-            🔄 A new version of the app is available.&nbsp;
-            <button
-              onClick={() => window.location.reload()}
-              className="underline font-semibold"
-            >
-              Refresh
-            </button>
-          </div>
-        )} */}
-
+        {/* ...existing code... */}
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#a1722f]"></div>
@@ -90,16 +115,17 @@ function App() {
           </div>
         ) : config && (
           <>
+            {/* ...existing code... */}
             <div className="text-center mb-10">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 max-w-xl mx-auto">
                 <div className="flex justify-center items-center mb-2">
-                  <div>Pi Network</div>
+                  <div>{currency === 'xrp' ? 'XRP' : 'Pi Network'}</div>
                   <ArrowLeftRight className="h-5 w-5 text-amber-600 dark:text-amber-500 mx-6" />
                   <div>GBP</div>
                 </div>
               </h2>
               <p className="text-gray-600 dark:text-gray-400 max-w-xl mx-auto">
-                Exchange rate and conversion for Pi Network cryptocurrency to GBP
+                Exchange rate and conversion for {currency === 'xrp' ? 'XRP' : 'Pi Network'} cryptocurrency to GBP
               </p>
               {/* refresh button */}
               <div className="flex justify-center mt-6">
@@ -159,6 +185,7 @@ function App() {
                       low_24hGBP={amountConfig.customHoldings.low_24hGBP}
                       allTimeHigh={amountConfig.customHoldings.allTimeHigh}
                       allTimeLow={amountConfig.customHoldings.allTimeLow}
+                      currency={currency}
                     />
                   </motion.div>
                 )}
@@ -172,6 +199,7 @@ function App() {
                     // After permalink, reload config for new amount
                     loadConfig(amount);
                   }}
+                  currency={currency}
                 />
               </div>
             </div>

@@ -14,7 +14,6 @@ This project provides a complete pipeline to track and display the GBP exchange 
 ### 🧹 1. React Frontend (`/src`)
 
 * Displays:
-
   * Pi Network GBP exchange rate
   * Market cap
   * 24h percentage change
@@ -22,6 +21,32 @@ This project provides a complete pipeline to track and display the GBP exchange 
 * Supports **light and dark themes** using Tailwind CSS with custom brand colors (`#160c23`, `#a1722f`)
 * Reads dynamic data from a JSON endpoint:
   `https://trossr32.github.io/pi-network-gbp/data/data.json`
+
+
+#### 🖼 Minimal Mode for Embedding & Currency Parameter
+
+You can embed just the holdings panel (for a specific amount) in an iframe or minimal view by adding `?mode=minimal&amount=YOUR_AMOUNT` to the URL:
+
+```
+https://trossr32.github.io/pi-network-gbp/?mode=minimal&amount=123
+```
+
+##### Currency Parameter
+
+By default, the app shows Pi Network data. You can also display XRP data by adding the `currency` parameter:
+
+```
+https://trossr32.github.io/pi-network-gbp/?mode=minimal&amount=123&currency=xrp
+```
+
+Supported values for `currency`:
+
+- `pi-network` (default)
+- `xrp`
+
+All text and data will update to reflect the selected currency.
+
+This works for both the full app and minimal/iframe mode.
 
 ---
 
