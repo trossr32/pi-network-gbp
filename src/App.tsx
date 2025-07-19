@@ -104,7 +104,7 @@ function App() {
   return (
     <div className="min-h-screen transition-colors duration-300 dark:bg-[#160c23] bg-gray-50">
       <main className="container mx-auto px-4 pt-16 pb-8">
-        {/* ...existing code... */}
+        
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#a1722f]"></div>
