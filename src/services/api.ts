@@ -27,7 +27,7 @@ export const fetchPiNetworkConfigForAmount = async (
   try {
     const response = await fetch(`${import.meta.env.BASE_URL}data/data.json`);
     if (!response.ok) {
-      throw new Error('Failed to fetch configuration');
+      throw new Error(`Failed to fetch configuration (status: ${response.status}, currency: '${currency}')`);
     }
     const allData = await response.json();
     const data = allData[currency];
