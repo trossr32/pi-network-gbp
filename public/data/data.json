@@ -1,80 +1,77 @@
-{
-  "pi-network": {
+{\n  "pi-network": {
     "id": "pi-network",
     "symbol": "pi",
     "name": "Pi Network",
-    "priceGBP": 0.328033,
-    "marketCapGBP": 2527697479,
-    "percentageChange": -2.2387,
-    "high_24hGBP": 0.338429,
+    "priceGBP": 0.329763,
+    "marketCapGBP": 2543838384,
+    "percentageChange": -1.04988,
+    "high_24hGBP": 0.335715,
     "low_24hGBP": 0.327265,
-    "lastUpdated": "2025-07-19T18:07:26.293Z",
+    "lastUpdated": "2025-07-19T20:19:18.085Z",
     "allTimeHigh": {
       "priceGBP": 2.35,
-      "percentageChange": -86.07314,
+      "percentageChange": -85.96106,
       "date": "2025-02-26T16:41:03.732Z"
     },
     "allTimeLow": {
       "priceGBP": 0.315895,
-      "percentageChange": 3.73025,
+      "percentageChange": 4.56507,
       "date": "2025-04-05T04:50:37.033Z"
     },
     "priceChange": {
-      "pricePi_24h": -0.0100756681639743,
-      "priceGBP24h": -0.007375943752861769,
-      "percentageChangePi_24h": -2.2387,
-      "percentageChangePi_7d": -5.05729,
-      "percentageChangePi_14d": -4.47066,
-      "percentageChangePi_30d": -17.52909,
-      "percentageChangePi_60d": -40.48255,
+      "pricePi_24h": -0.004692991513035,
+      "priceGBP24h": -0.003456371006579084,
+      "percentageChangePi_24h": -1.04988,
+      "percentageChangePi_7d": -4.65512,
+      "percentageChangePi_14d": -3.9863,
+      "percentageChangePi_30d": -17.3259,
+      "percentageChangePi_60d": -40.66644,
       "percentageChangePi_200d": 0.0,
       "percentageChangePi_1y": 0.0,
-      "percentageChangePi_GBP": -2.19909,
-      "percentageChangePi_GBP_7d": -4.45561,
-      "percentageChangePi_GBP_14d": -2.74363,
-      "percentageChangePi_GBP_30d": -17.27766,
-      "percentageChangePi_GBP_60d": -40.6247,
+      "percentageChangePi_GBP": -1.03727,
+      "percentageChangePi_GBP_7d": -4.05089,
+      "percentageChangePi_GBP_14d": -2.25052,
+      "percentageChangePi_GBP_30d": -16.98137,
+      "percentageChangePi_GBP_60d": -40.7805,
       "percentageChangePi_GBP_200d": null,
       "percentageChangePi_GBP_1y": null
     }
-  },
-  "xrp": {
-    "id": "xrp",
-    "symbol": "xrp",
-    "name": "XRP",
-    "priceGBP": 0.45,
-    "marketCapGBP": 24000000000,
-    "percentageChange": 1.23,
-    "high_24hGBP": 0.47,
-    "low_24hGBP": 0.44,
-    "lastUpdated": "2025-07-19T18:07:26.293Z",
+  },\n  "xrp": {
+    "id": null,
+    "symbol": null,
+    "name": null,
+    "priceGBP": null,
+    "marketCapGBP": null,
+    "percentageChange": null,
+    "high_24hGBP": null,
+    "low_24hGBP": null,
+    "lastUpdated": null,
     "allTimeHigh": {
-      "priceGBP": 2.5,
-      "percentageChange": -82.0,
-      "date": "2018-01-04T00:00:00.000Z"
+      "priceGBP": null,
+      "percentageChange": null,
+      "date": null
     },
     "allTimeLow": {
-      "priceGBP": 0.002,
-      "percentageChange": 22400.0,
-      "date": "2014-07-07T00:00:00.000Z"
+      "priceGBP": null,
+      "percentageChange": null,
+      "date": null
     },
     "priceChange": {
-      "pricePi_24h": 0.01,
-      "priceGBP24h": 0.005,
-      "percentageChangePi_24h": 1.23,
-      "percentageChangePi_7d": 2.5,
-      "percentageChangePi_14d": 3.1,
-      "percentageChangePi_30d": 5.0,
-      "percentageChangePi_60d": 10.0,
-      "percentageChangePi_200d": 50.0,
-      "percentageChangePi_1y": 100.0,
-      "percentageChangePi_GBP": 1.23,
-      "percentageChangePi_GBP_7d": 2.5,
-      "percentageChangePi_GBP_14d": 3.1,
-      "percentageChangePi_GBP_30d": 5.0,
-      "percentageChangePi_GBP_60d": 10.0,
-      "percentageChangePi_GBP_200d": 50.0,
-      "percentageChangePi_GBP_1y": 100.0
+      "pricePi_24h": null,
+      "priceGBP24h": null,
+      "percentageChangePi_24h": null,
+      "percentageChangePi_7d": null,
+      "percentageChangePi_14d": null,
+      "percentageChangePi_30d": null,
+      "percentageChangePi_60d": null,
+      "percentageChangePi_200d": null,
+      "percentageChangePi_1y": null,
+      "percentageChangePi_GBP": null,
+      "percentageChangePi_GBP_7d": null,
+      "percentageChangePi_GBP_14d": null,
+      "percentageChangePi_GBP_30d": null,
+      "percentageChangePi_GBP_60d": null,
+      "percentageChangePi_GBP_200d": null,
+      "percentageChangePi_GBP_1y": null
     }
-  }
-}
+  }\n}
