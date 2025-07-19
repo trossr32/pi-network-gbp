@@ -6,7 +6,7 @@ export const fetchPiNetworkConfig = async (currency: string = 'pi-network'): Pro
   try {
     const response = await fetch(`${import.meta.env.BASE_URL}data/data.json`);
     if (!response.ok) {
-      throw new Error('Failed to fetch configuration');
+      throw new Error(`Failed to fetch configuration for currency '${currency}' (HTTP status: ${response.status})`);
     }
     const allData = await response.json();
     if (!allData[currency]) {
