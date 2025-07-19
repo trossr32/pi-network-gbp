@@ -39,7 +39,7 @@
     }
   },
   "xrp": {
-    "id": "ripple",
+    "id": "xrp",
     "symbol": "xrp",
     "name": "XRP",
     "priceGBP": 0.45,

@@ -103,7 +103,7 @@ jobs:
           }
 
           pi_json=$(fetch_and_format "pi-network")
-          xrp_json=$(fetch_and_format "ripple")
+          xrp_json=$(fetch_and_format "xrp")
 
           echo "{\n  \"pi-network\": $pi_json,\n  \"xrp\": $xrp_json\n}" > public/data/data.json
 
